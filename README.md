@@ -1,36 +1,81 @@
 # Parking Space Detection in OpenCV
-For a fun weekend project, I decided to play around with the OpenCV (Open Source Computer Vision) library in python.
 
-OpenCV is an extensive open source library (available in python, Java, and C++) that's used for image analysis and is pretty neat.
+A computer vision project that detects available parking spaces in video footage using OpenCV.
 
-The lofty goal for my OpenCV experiment was to take any static image or video of a parking lot and be able to automatically detect whenever a parking space was available or occupied.
-
-Through research and exploration, I discovered how lofty of a goal that was (at least for the scope of a weekend). What I was able accomplish was to detect how many spots were available in a parking lot, with just a bit of upfront work by the user.
-
-This page is a walkthrough of my process and what I learned along the way.
-
-I'll start with an overview, then talk about my process, and end with some ideas for future work.
+## Table of Contents
+- [Overview](#overview)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [Process](#process)
+- [Future Work](#future-work)
 
 ## Overview
 [![Unedited parking lot](https://s3-us-west-2.amazonaws.com/parkinglot-opencv/parking_shot.png)](https://www.youtube.com/watch?v=SszV59YBn_o)
 
-The above link takes you to a video of the parking space detection program in action.
+This project uses OpenCV to detect available parking spaces in a parking lot video. The system allows users to mark parking spaces and then automatically tracks whether these spaces are occupied or available throughout the video.
 
-To run:
-```python
+### Features
+- Interactive selection of parking spaces to track
+- Real-time detection of occupied and available spaces
+- Visual indication of space status (green for available, red for occupied)
+- Frame-by-frame analysis of parking lot status
+
+## Installation
+
+### Prerequisites
+- Python 3.6 or higher
+- OpenCV 4.x
+- NumPy
+- PyYAML
+
+### Setup
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/chinmaydwivedi/Parking-detection.git
+   cd Parking-detection
+   ```
+
+2. Install the required dependencies:
+   ```bash
+   pip install opencv-python numpy pyyaml
+   ```
+
+## Usage
+
+### Basic Usage
+```bash
 python main.py --image images/parking_lot_1.png --data data/coordinates_1.yml --video videos/parking_lot_1.mp4 --start-frame 400
 ```
 
-Program flow is as follows:
-- User inputs file name for a video, a still image from the video, and a path for the output file of parking space coordinates.
-- User clicks 4 corners for each spot they want tracked. Presses 'q' when all desired spots are marked.
-- Video begins with the user provided boxes overlayed the video. Occupied spots initialized with red boxes, available spots with green.
-    - Car leaves a space, the red box turns green.
-    - Car drives into a free space, the green box turns red.
+### Command Line Arguments
+- `--image`: Path to a still image of the parking lot
+- `--data`: Path to save/load the parking space coordinates
+- `--video`: Path to the video file of the parking lot
+- `--start-frame`: (Optional) Frame number to start from in the video
 
-The data on the entering and exiting of these cars can be used for a number of purposes: closest spot detection, analytics on parking lot usage, and for those counters outside of parking garages that tell you how many cars are on each level (to name a few).
+### Marking Parking Spaces
+1. Run the program with the arguments above
+2. Click on the 4 corners of each parking space you want to track
+3. Press 'q' when you've finished marking all desired spaces
+4. The program will begin analyzing the video with the marked spaces
 
-This project was my first tour through computer vision, so to get it working in a weekend, I went the "express learning" route. That consisted of auditing this [Computer Vision and Image Analytics course](https://www.edx.org/course/computer-vision-and-image-analysis), reading through [OpenCV documentation](https://docs.opencv.org/2.4/modules/refman.html), querying the net, and toggling OpenCV function parameters to see what happened. Overall, a lot of learning and a ton of fun.
+### Controls During Video Playback
+- Press 'q' to quit
+- Press 'p' to pause/resume
+
+## Project Structure
+```
+Parking-detection/
+├── main.py                  # Main entry point
+├── motion_detector.py       # Motion detection functionality
+├── images/                  # Sample images
+│   └── parking_lot_1.png
+├── videos/                  # Sample videos
+│   └── parking_lot_1.mp4
+└── data/                    # Saved parking space coordinates
+    └── coordinates_1.yml
+```
 
 ## Process
 ### The beginning
@@ -128,14 +173,18 @@ After drawing the rectangles, all there was left to do was examine the area of e
 
 By taking each (filtered and blurred) rectangle, determining the area, and doing an average on the pixels, I was able to tell when there wasn't a car in the spot if the average was high (more dark pixels). I changed the color of the bounding box accordingly and viola, a parking detection program!
 
-The code for drawing the rectangles and motion detection is pretty generic. It's seperated out into classes and should be reusable outside of the context of a parking lot. I have tested this with two different parking lot videos and it worked pretty well. I plan to make other improvements and try to seperate OpenCV references to make code easier to test. I'm open to ideas and feedback.
-
-Check out [the code](https://github.com/olgarose/ParkingLot) for more!
+The code for drawing the rectangles and motion detection is pretty generic. It's separated out into classes and should be reusable outside of the context of a parking lot. I have tested this with two different parking lot videos and it worked pretty well. I plan to make other improvements and try to separate OpenCV references to make code easier to test. I'm open to ideas and feedback.
 
 ## Future work
 - Hook up a webcam to a Raspberry Pi and have live parking monitoring at home!
 - [Transform parking lot video to have overview perspective](http://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_geometric_transformations/py_geometric_transformations.html) (for clearer rectangles)
 - Experiment with [HOG descriptors](https://gurus.pyimagesearch.com/lesson-sample-histogram-of-oriented-gradients-and-car-logo-recognition/) to detect people or other objects of interest
+- Add a web interface for remote monitoring
+- Implement a more robust detection algorithm for different lighting conditions
+- Create a database to track historical parking data
 
+## Contributing
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-# Parking-detection
+## License
+This project is open source and available under the [MIT License](LICENSE).
